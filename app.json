@@ -1,0 +1,47 @@
+{
+    "name" : "RequestTrackerBot",
+    "description" : "This is RequestTrackerBot and it used for tracking request made by user in a group",
+    "keywords" : [
+        "telegram",
+        "bot",
+        "heroku",
+        "python",
+        "pyrogram",
+        "app.json",
+        "app",
+        "request",
+        "#request",
+        "tracker",
+        "anime",
+        "movie",
+        "series",
+        "webseries"
+    ],
+    "repository" : "https://github.com/AJTimePyro/RequestBot",
+    "env" : {
+        "BOT_TOKEN" : {
+            "description" : "Get From https://t.me/BotFather"
+        },
+        "API_ID" : {
+            "description" : "Get From https://my.telegram.org"
+        },
+        "API_HASH" : {
+            "description" : "Get From https://my.telegram.org"
+        },
+        "OWNER_ID" : {
+            "description" : "Your Telegram User ID"
+        }
+    },
+    "stack" : "heroku-20",
+    "buildpacks" : [
+        {
+            "url" : "heroku/python"
+        }
+    ],
+    "formation" : {
+        "worker" : {
+            "quantity" : 1,
+            "size" : "free"
+        }
+    }
+}
