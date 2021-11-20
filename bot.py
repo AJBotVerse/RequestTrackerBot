@@ -31,23 +31,40 @@ app = Client(
 )
 
 
-@app.on_message(filters.private & filters.command("start"))
+@app.on_message(filters.private & filters.command(["start", "help"]))
 async def startHandler(bot:Update, msg:Message):
-    botInfo = await bot.get_me()
-    await msg.reply_text(
-        "Add me to your Group & Channel",
-        parse_mode = "html",
-        reply_markup = InlineKeyboardMarkup(
-            [
+    if msg.from_user.id == Config.OWNER_ID:
+        botInfo = await bot.get_me()
+        await msg.reply_text(
+            "<b>Hi, I am Request Tracker Bot🤖.\nIf you hadn't added me in your Group then ➕add me now.</b>",
+            parse_mode = "html",
+            reply_markup = InlineKeyboardMarkup(
                 [
-                    InlineKeyboardButton(
-                        "Add me to your Channel.",
-                        url = f"https://telegram.me/{botInfo.username}?startgroup=true"
-                    )
+                    [
+                        InlineKeyboardButton(
+                            "➕Add me to your Group.",
+                            url = f"https://telegram.me/{botInfo.username}?startgroup=true"
+                        )
+                    ]
                 ]
-            ]
+            )
         )
-    )
+    else:
+        await msg.reply_text(
+            "🚀Deploy your Own Bot.",
+            parse_mode = "html",
+            reply_markup = InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            "Click Here To Deploy🚀",
+                            url = "https://heroku.com/deploy?template=https://github.com/AJTimePyro/RequestBot"
+                        )
+                    ]
+                ]
+            )
+        )
+    return
 
 @app.on_message(filters.new_chat_members)
 async def chatHandler(bot:Update, msg:Message):
@@ -58,24 +75,24 @@ async def chatHandler(bot:Update, msg:Message):
             except KeyError:
                 environ["GROUPID"] = str(msg.chat.id)
                 await msg.reply_text(
-                    "Group Added Successfully.",
+                    "<b>Now make me admin💪.</b>",
                     parse_mode = "html"
                 )
             else:
                 await msg.reply_text(
-                    "Group is already added.",
+                    "<b>Currently I am not Supporting MultiGroups🥲</b>",
                     parse_mode = "html"
                 )
     else:
         await msg.reply_text(
-            "Deploy your Own Bot.",
+            "🚀Deploy your Own Bot.",
             parse_mode = "html",
             reply_markup = InlineKeyboardMarkup(
                 [
                     [
                         InlineKeyboardButton(
-                            "Click Here To Deploy",
-                            url = "https://heroku.com/deploy?template=https://github.com/AJTimePyro/AJPyroManager"
+                            "Click Here To Deploy🚀",
+                            url = "https://heroku.com/deploy?template=https://github.com/AJTimePyro/RequestBot"
                         )
                     ]
                 ]
@@ -96,7 +113,7 @@ async def forwardedHandler(bot:Update, msg:Message):
                     botStatus = await bot.get_chat_member(channelID, 'me')
                 except ChatAdminRequired:
                     await msg.reply_text(
-                    "Make me admin in your Channel, and forward message from channel again",
+                    "</b>Make me 💪admin in your Channel, and forward message from channel again</b>",
                     parse_mode = "html"
                     )
                 else:
@@ -104,19 +121,19 @@ async def forwardedHandler(bot:Update, msg:Message):
                     for right in adminRights:
                         if not right:
                             await msg.reply_text(
-                                "Make sure to give permission to Post, Edit & Delete Message",
+                                "<b>Make sure to Give Permission💪 to Post, Edit & Delete Message\nAnd Forward message from channel again</b>",
                                 parse_mode = "html"
                             )
                             break
                     else:
                         environ["CHANNELID"] = str(channelID)
                         await msg.reply_text(
-                            "Channel Connected Successfully.",
+                            "<b>Channel Connected Successfully... 🥳🥳🥳</b>",
                             parse_mode = "html"
                         )
             else:
                 await msg.reply_text(
-                    "Channel is already connected.",
+                    "<b>😊Channel is already connected.</b>",
                     parse_mode = "html"
                 )
     return
@@ -199,25 +216,25 @@ async def callBackButton(bot:Update, callback_query:CallbackQuery):
 
         if data == "reject":
             result = "REJECTED"
-            groupResult = "has been Rejected."
+            groupResult = "has been Rejected💔."
             button = InlineKeyboardButton("Request Rejected🚫", "rejected")
         elif data == "done":
             result = "COMPLETED"
-            groupResult = "is Completed."
+            groupResult = "is Completed🥳."
             button = InlineKeyboardButton("Request Completed✅", "completed")
         elif data == "unavailable":
             result = "UNAVAILABLE"
-            groupResult = "has been rejected due to Unavailablity."
+            groupResult = "has been rejected💔 due to Unavailablity🥲."
             button = InlineKeyboardButton("Request Rejected🚫", "rejected")
 
         elif data == "rejected":
             return await callback_query.answer(
-                "This request is rejected...\nAsk admins in group for more info",
+                "This request is rejected💔...\nAsk admins in group for more info💔",
                 show_alert = True
             )
         elif data == "completed":
             return await callback_query.answer(
-                "This request Is Completed...\nCheckout in Channel",
+                "This request Is Completed🥳...\nCheckout in Channel😊",
                 show_alert = True
             )
 
@@ -244,7 +261,7 @@ async def callBackButton(bot:Update, callback_query:CallbackQuery):
             )
         )
 
-        replyText = f"Dear {mentionUser}\nYour request for {contentRequested} {groupResult}\nThanks for requesting!"
+        replyText = f"<b>Dear {mentionUser}🧑\nYour request for {contentRequested} {groupResult}\n👍Thanks for requesting!</b>"
         groupID = environ["GROUPID"]
         await bot.send_message(
             groupID,
@@ -253,7 +270,7 @@ async def callBackButton(bot:Update, callback_query:CallbackQuery):
         )
     else:
         await callback_query.answer(
-            "Your are not Owner.",
+            "Who the hell are you?\nYour are not Owner😒.",
             show_alert = True
         )
     return
