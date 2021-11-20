@@ -17,10 +17,7 @@ from pyrogram.types import (
 from pyrogram.errors.exceptions.bad_request_400 import ChatAdminRequired
 
 # Importing Credentials & Required Data
-try:
-    from testexp.config import *
-except ModuleNotFoundError:
-    from config import *
+from config import *
 
 
 app = Client(
