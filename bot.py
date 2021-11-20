@@ -14,6 +14,7 @@ from pyrogram.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup
 )
+from pyrogram.errors.exceptions.bad_request_400 import ChatAdminRequired
 
 # Importing Credentials & Required Data
 try:
@@ -80,6 +81,70 @@ async def chatHandler(bot:Update, msg:Message):
                 ]
             )
         )
+    return
+
+@Client.on_message(filters.forwarded & filters.private)
+async def forwardedHandler(bot:Update, msg:Message):
+    if msg.id == Config.OWNER_ID:
+        forwardInfo = msg.forward_from_chat
+        if forwardInfo.type == "channel":
+            try:
+                environ["CHANNELID"]
+            except KeyError:
+                channelID = forwardInfo.id
+                try:
+                    botStatus = await bot.get_chat_member(channelID, 'me')
+                except ChatAdminRequired:
+                    await msg.reply_text(
+                    "Make me admin in your Channel, and forward message from channel again",
+                    parse_mode = "html"
+                    )
+                else:
+                    adminRights = [botStatus.can_post_messages, botStatus.can_edit_messages, botStatus.can_delete_messages]
+                    for right in adminRights:
+                        if not right:
+                            await msg.reply_text(
+                                "Make sure to give permission to Post, Edit & Delete Message",
+                                parse_mode = "html"
+                            )
+                            break
+                    else:
+                        environ["CHANNELID"] = str(channelID)
+                        await msg.reply_text(
+                            "Channel Connected Successfully.",
+                            parse_mode = "html"
+                        )
+            else:
+                await msg.reply_text(
+                    "Channel is already connected.",
+                    parse_mode = "html"
+                )
+    return
+
+@app.on_message(filters.group & filters.regex("^#request (.*)"))
+async def requestHandler(bot:Update, msg:Message):
+    # try:
+    #     environ["CHANNELID"]
+    #     environ["GROUPID"]
+    # except KeyError:
+    #     return
+    # else:
+    #     print(msg)
+    # if msg.chat.id == int(environ["GROUPID"]):
+    if msg.chat.id == -1001664940650:
+        fromUser = msg.from_user
+        requestText = f"<b>Request by <a href='tg://user?id={fromUser.id}'>{fromUser.first_name}</a>\n\n{msg.text}</b>"
+        # await bot.send_message(int(environ["CHANNELID"]))
+        await bot.send_message(-1001664615028, requestText, reply_markup = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Requested Message", url = f"https://t.me/c/1664940650/{msg.message_id}")],
+            [InlineKeyboardButton("🚫Reject", "reject"),
+            InlineKeyboardButton("Done✅", "done")],
+            [InlineKeyboardButton("⚠️Unavailable⚠️", "unavailable")]
+        ]))
+        replyText = ""
+        await msg.reply_text()
+    # print(msg)
+
 
 
 
