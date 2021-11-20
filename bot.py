@@ -3,7 +3,7 @@
 
 """Importing"""
 # Importing External Packages
-from os import environ
+
 from pyrogram import (
     Client,
     filters
@@ -18,9 +18,9 @@ from pyrogram.errors.exceptions.bad_request_400 import ChatAdminRequired
 
 # Importing Credentials & Required Data
 try:
-    from testexp.config import Config
+    from testexp.config import *
 except ModuleNotFoundError:
-    from config import Config
+    from config import *
 
 
 app = Client(
@@ -123,29 +123,73 @@ async def forwardedHandler(bot:Update, msg:Message):
 
 @app.on_message(filters.group & filters.regex("^#request (.*)"))
 async def requestHandler(bot:Update, msg:Message):
-    # try:
-    #     environ["CHANNELID"]
-    #     environ["GROUPID"]
-    # except KeyError:
-    #     return
-    # else:
-    #     print(msg)
-    # if msg.chat.id == int(environ["GROUPID"]):
-    if msg.chat.id == -1001664940650:
-        fromUser = msg.from_user
-        requestText = f"<b>Request by <a href='tg://user?id={fromUser.id}'>{fromUser.first_name}</a>\n\n{msg.text}</b>"
-        # await bot.send_message(int(environ["CHANNELID"]))
-        await bot.send_message(-1001664615028, requestText, reply_markup = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Requested Message", url = f"https://t.me/c/1664940650/{msg.message_id}")],
-            [InlineKeyboardButton("🚫Reject", "reject"),
-            InlineKeyboardButton("Done✅", "done")],
-            [InlineKeyboardButton("⚠️Unavailable⚠️", "unavailable")]
-        ]))
-        replyText = ""
-        await msg.reply_text()
-    # print(msg)
+    try:
+        environ["CHANNELID"]
+        environ["GROUPID"]
+    except KeyError:
+        return
+    else:
+        chatInfo = msg.chat
+        groupID = environ["GROUPID"]
+        channelID = environ["CHANNELID"]
 
+        if chatInfo.id == int(groupID):
+            fromUser = msg.from_user
+            mentionUser = f"<a href='tg://user?id={fromUser.id}'>{fromUser.first_name}</a>"
+            requestText = f"<b>Request by {mentionUser}\n\n{msg.text}</b>"
+            
+            groupIDPro = groupID.removeprefix(str(-100))
 
+            channelIDPro = channelID.removeprefix(str(-100))
+
+            requestMSG = await bot.send_message(
+                int(channelID),
+                requestText,
+                reply_markup = InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton(
+                                "Requested Message",
+                                url = f"https://t.me/c/{groupIDPro}/{msg.message_id}"
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                "🚫Reject",
+                                "reject"
+                            ),
+                            InlineKeyboardButton(
+                                "Done✅",
+                                "done"
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                "⚠️Unavailable⚠️",
+                                "unavailable"
+                            )
+                        ]
+                    ]
+                )
+            )
+
+            replyText = f"<b>👋 Hello {mentionUser} !!\n\n📍 Your Request for {chatInfo.title} has been submitted to the admins.\n\n🚀 Your Request Will Be Uploaded In 48hours or less.\n📌 Please Note that Admins might be busy. So, this may take more time.\n\n👇 See Your Request Status Here 👇</b>"
+
+            await msg.reply_text(
+                replyText,
+                parse_mode = "html",
+                reply_to_message_id = msg.message_id,
+                reply_markup = InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton(
+                                "⏳Request Status⏳",
+                                url = f"https://t.me/c/{channelIDPro}/{requestMSG.message_id}"
+                            )
+                        ]
+                    ]
+                )
+            )
 
 
 app.run()
