@@ -30,6 +30,12 @@
         },
         "OWNER_ID" : {
             "description" : "Your Telegram User ID"
+        },
+        "CHANNELID" : {
+            "description" : "ID of Channel"
+        },
+        "GROUPID" : {
+            "description" : "ID of Group"
         }
     },
     "stack" : "heroku-20",

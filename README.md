@@ -26,6 +26,8 @@ These ScreenShots might help you to understand this bot well.
 * API ID & API Hash - Get both from https://my.telegram.org
 * Bot Token - Get easily from [Bot Father](https://t.me/BotFather)
 * User ID - Your User ID.
+* CHANNEL ID - ID of your Channel
+* GROUP ID - ID of your Group
 
 After meeting the requirements, fill the bot/credentials.py file and then depoly the bot successfully.
 
@@ -38,8 +40,7 @@ Click Below Button to Deploy your Bot.
 1. Deploy your Bot on Heroku
 2. Add Bot to your group & make it admin.
 3. Add Bot to your Channel & make admin there as well, also make sure to give permission to Post Messages, Edit Messages & Delete Messages.
-4. After you added bot to both group & channel successfully (With Admin Rights) forward a message from your Channel to Bot.
-5. Now any user of group can request for content by using #request Keyword.
+4. Now any user of group can request for content by using #request Keyword.
 
 ## Support Telegram Group and Channel
 
