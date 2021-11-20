@@ -51,12 +51,12 @@ async def startHandler(bot:Update, msg:Message):
 
 @app.on_message(filters.new_chat_members)
 async def chatHandler(bot:Update, msg:Message):
-    if msg.from_user == Config.OWNER_ID:
+    if msg.from_user.id == Config.OWNER_ID:
         if msg.new_chat_members[0].is_self:
             try:
                 environ["GROUPID"]
             except KeyError:
-                environ["GROUPID"] == str(msg.chat.id)
+                environ["GROUPID"] = str(msg.chat.id)
                 await msg.reply_text(
                     "Group Added Successfully.",
                     parse_mode = "html"
@@ -85,7 +85,7 @@ async def chatHandler(bot:Update, msg:Message):
 
 @app.on_message(filters.forwarded & filters.private)
 async def forwardedHandler(bot:Update, msg:Message):
-    if msg.id == Config.OWNER_ID:
+    if msg.chat.id == Config.OWNER_ID:
         forwardInfo = msg.forward_from_chat
         if forwardInfo.type == "channel":
             try:
@@ -138,9 +138,9 @@ async def requestHandler(bot:Update, msg:Message):
             fromUser = msg.from_user
             mentionUser = f"<a href='tg://user?id={fromUser.id}'>{fromUser.first_name}</a>"
             requestText = f"<b>Request by {mentionUser}\n\n{msg.text}</b>"
+            contentRequested = msg.text.split("#request ")[1]
             
             groupIDPro = groupID.removeprefix(str(-100))
-
             channelIDPro = channelID.removeprefix(str(-100))
 
             requestMSG = await bot.send_message(
@@ -174,7 +174,7 @@ async def requestHandler(bot:Update, msg:Message):
                 )
             )
 
-            replyText = f"<b>👋 Hello {mentionUser} !!\n\n📍 Your Request for {chatInfo.title} has been submitted to the admins.\n\n🚀 Your Request Will Be Uploaded In 48hours or less.\n📌 Please Note that Admins might be busy. So, this may take more time.\n\n👇 See Your Request Status Here 👇</b>"
+            replyText = f"<b>👋 Hello {mentionUser} !!\n\n📍 Your Request for {contentRequested} has been submitted to the admins.\n\n🚀 Your Request Will Be Uploaded In 48hours or less.\n📌 Please Note that Admins might be busy. So, this may take more time.\n\n👇 See Your Request Status Here 👇</b>"
 
             await msg.reply_text(
                 replyText,
@@ -212,18 +212,18 @@ async def callBackButton(bot:Update, callback_query:CallbackQuery):
 
         elif data == "rejected":
             return await callback_query.answer(
-                "This request Is Completed...\nCheckout in Channel",
+                "This request is rejected...\nAsk admins in group for more info",
                 show_alert = True
             )
         elif data == "completed":
             return await callback_query.answer(
-                "This request is rejected...\nAsk admins in group for more info",
+                "This request Is Completed...\nCheckout in Channel",
                 show_alert = True
             )
 
         msg = callback_query.message
         originalMsg = msg.text
-        animeRequested = originalMsg.split('#request ')[1]
+        contentRequested = originalMsg.split('#request ')[1]
         requestedBy = originalMsg.removeprefix("Request by ").split('\n\n')[0]
         userid = msg.entities[1].user.id
         mentionUser = f"<a href='tg://user?id={userid}'>{requestedBy}</a>"
@@ -244,7 +244,7 @@ async def callBackButton(bot:Update, callback_query:CallbackQuery):
             )
         )
 
-        replyText = f"Dear {mentionUser}\nYour request for {animeRequested} {groupResult}\nThanks for requesting!"
+        replyText = f"Dear {mentionUser}\nYour request for {contentRequested} {groupResult}\nThanks for requesting!"
         groupID = environ["GROUPID"]
         await bot.send_message(
             groupID,
