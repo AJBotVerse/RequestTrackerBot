@@ -7,7 +7,7 @@ Don't Forget to give a Star.
 
 ## Some ScreenShots
 These ScreenShots might help you to understand this bot well.
-![](resources\1.jpg)
+![](https://raw.githubusercontent.com/AJTimePyro/RequestBot/master/resources/1.jpg)
 
 ![](resources\2.jpg)
 
