@@ -9,17 +9,17 @@ Don't Forget to give a Star.
 These ScreenShots might help you to understand this bot well.
 ![](https://raw.githubusercontent.com/AJTimePyro/RequestBot/master/resources/1.jpg)
 
-![](resources\2.jpg)
+![](https://raw.githubusercontent.com/AJTimePyro/RequestBot/master/resources/2.jpg)
 
-![](resources\3.jpg)
+![](https://raw.githubusercontent.com/AJTimePyro/RequestBot/master/resources/3.jpg)
 
-![](resources\4.jpg)
+![](https://raw.githubusercontent.com/AJTimePyro/RequestBot/master/resources/4.jpg)
 
-![](resources\5.jpg)
+![](https://raw.githubusercontent.com/AJTimePyro/RequestBot/master/resources/5.jpg)
 
-![](resources\6.jpg)
+![](https://raw.githubusercontent.com/AJTimePyro/RequestBot/master/resources/6.jpg)
 
-![](resources\7.jpg)
+![](https://raw.githubusercontent.com/AJTimePyro/RequestBot/master/resources/7.jpg)
 
 
 ## Requirement
