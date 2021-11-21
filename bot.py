@@ -160,12 +160,16 @@ async def channelgroupRemover(bot:Update, msg:Message):
 
 @app.on_message(filters.group & filters.regex("^#request (.*)"))
 async def requestHandler(bot:Update, msg:Message):
-    chatInfo = msg.chat
-    
-    groupID = Config.GROUPID
-    channelID = Config.CHANNELID
+    groupID = str(msg.chat.id)
 
-    if chatInfo.id == int(groupID):
+    document = collection_ID.find_one(query)
+    try:
+        channelIDL = document[groupID]
+    except KeyError:
+        pass
+    else:
+        channelID = channelIDL[0]
+
         fromUser = msg.from_user
         mentionUser = f"<a href='tg://user?id={fromUser.id}'>{fromUser.first_name}</a>"
         requestText = f"<b>Request by {mentionUser}\n\n{msg.text}</b>"
@@ -222,6 +226,8 @@ async def requestHandler(bot:Update, msg:Message):
                 ]
             )
         )
+    finally:
+        return
 
 @app.on_callback_query()
 async def callBackButton(bot:Update, callback_query:CallbackQuery):
