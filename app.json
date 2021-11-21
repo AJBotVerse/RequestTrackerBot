@@ -17,7 +17,7 @@
         "series",
         "webseries"
     ],
-    "repository" : "https://github.com/AJTimePyro/RequestBot",
+    "repository" : "https://github.com/AJTimePyro/RequestTrackerBot",
     "env" : {
         "BOT_TOKEN" : {
             "description" : "Get From https://t.me/BotFather"
