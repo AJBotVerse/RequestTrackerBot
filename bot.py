@@ -54,7 +54,7 @@ async def startHandler(bot:Update, msg:Message):
                     [
                         InlineKeyboardButton(
                             "Click Here To Deploy🚀",
-                            url = "https://heroku.com/deploy?template=https://github.com/AJTimePyro/RequestBot"
+                            url = "https://heroku.com/deploy?template=https://github.com/AJTimePyro/RequestTrackerBot"
                         )
                     ]
                 ]
@@ -86,7 +86,7 @@ async def chatHandler(bot:Update, msg:Message):
                     [
                         InlineKeyboardButton(
                             "Click Here To Deploy🚀",
-                            url = "https://heroku.com/deploy?template=https://github.com/AJTimePyro/RequestBot"
+                            url = "https://heroku.com/deploy?template=https://github.com/AJTimePyro/RequestTrackerBot"
                         )
                     ]
                 ]
