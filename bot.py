@@ -79,7 +79,7 @@ async def startHandler(bot:Update, msg:Message):
 async def chatHandler(bot:Update, msg:Message):
     if msg.new_chat_members[0].is_self:
         await msg.reply_text(
-            "<b>Your Group ID is <code>{msg.chat.id}</code>.</b>",
+            f"<b>Your Group ID is <code>{msg.chat.id}</code>.</b>",
             parse_mode = "html"
         )
     return
