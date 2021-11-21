@@ -28,14 +28,8 @@
         "API_HASH" : {
             "description" : "Get From https://my.telegram.org"
         },
-        "OWNER_ID" : {
-            "description" : "Your Telegram User ID"
-        },
-        "CHANNELID" : {
-            "description" : "ID of Channel"
-        },
-        "GROUPID" : {
-            "description" : "ID of Group"
+        "MONGO_STR" : {
+            "description" : "Get from Mongo DB Atlas"
         }
     },
     "stack" : "heroku-20",
