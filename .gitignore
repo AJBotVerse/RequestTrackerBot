@@ -1,3 +1,10 @@
+
+# Virtual environment
 venv
+
+# Test/Experiment Folder
 testexp
-RequestBot.session
+
+# Session File
+RequestTrackerBot.session
+
