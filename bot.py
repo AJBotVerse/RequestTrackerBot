@@ -242,6 +242,16 @@ async def callBackButton(bot:Update, callback_query:CallbackQuery):
         groupID, channelOwnerID = resultID
 
         data = callback_query.data
+        if data == "rejected":
+            return await callback_query.answer(
+                "This request is rejected💔...\nAsk admins in group for more info💔",
+                show_alert = True
+            )
+        elif data == "completed":
+            return await callback_query.answer(
+                "This request Is Completed🥳...\nCheckout in Channel😊",
+                show_alert = True
+            )
         if callback_query.from_user.id == channelOwnerID:
 
             if data == "reject":
@@ -286,17 +296,7 @@ async def callBackButton(bot:Update, callback_query:CallbackQuery):
                 replyText,
                 parse_mode = "html"
             )
-            return
-        if data == "rejected":
-            await callback_query.answer(
-                "This request is rejected💔...\nAsk admins in group for more info💔",
-                show_alert = True
-            )
-        elif data == "completed":
-            await callback_query.answer(
-                "This request Is Completed🥳...\nCheckout in Channel😊",
-                show_alert = True
-            )
+        
         else:
             await callback_query.answer(
                 "Who the hell are you?\nYour are not Owner😒.",
