@@ -282,7 +282,7 @@ async def callBackButton(bot:Update, callback_query:CallbackQuery):
 
             replyText = f"<b>Dear {mentionUser}🧑\nYour request for {contentRequested} {groupResult}\n👍Thanks for requesting!</b>"
             await bot.send_message(
-                groupID,
+                int(groupID),
                 replyText,
                 parse_mode = "html"
             )
