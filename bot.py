@@ -35,6 +35,12 @@ app = Client(
 mongo_client = MongoClient(Config.MONGO_STR)
 db_bot = mongo_client['RequestTrackerBot']
 collection_ID = db_bot['channelGroupID']
+query = {
+    "groupID" : [
+        "channelID",
+        "userID"
+    ]
+}
 
 
 """Handlers"""
@@ -42,71 +48,115 @@ collection_ID = db_bot['channelGroupID']
 # Start & Help Handler
 @app.on_message(filters.private & filters.command(["start", "help"]))
 async def startHandler(bot:Update, msg:Message):
-    print(msg)
-    if msg.from_user.id == Config.OWNER_ID:
-        botInfo = await bot.get_me()
-        await msg.reply_text(
-            "<b>Hi, I am Request Tracker Bot🤖.\nIf you hadn't added me in your Group then ➕add me now.</b>",
-            parse_mode = "html",
-            reply_markup = InlineKeyboardMarkup(
+    botInfo = await bot.get_me()
+    await msg.reply_text(
+        "<b>Hi, I am Request Tracker Bot🤖.\
+        \nIf you hadn't added me in your Group & Channel then ➕add me now.\
+        \n\nHow to Use me?</b>\
+        \n\t1. Add me to your Group & CHannel.\
+        \n\t2. Make me admin in both Channel & Group.\
+        \n\t3. Give permission to Post , Edit & Delete Messages.\
+        \n\t4. Now send Group ID & Channel ID in this format <code>/add GroupID ChannelID</code>.\
+        \nNow Bot is ready to be used.",
+        parse_mode = "html",
+        reply_markup = InlineKeyboardMarkup(
+            [
                 [
-                    [
-                        InlineKeyboardButton(
-                            "➕Add me to your Group.",
-                            url = f"https://telegram.me/{botInfo.username}?startgroup=true"
-                        )
-                    ]
+                    InlineKeyboardButton(
+                        "➕Add me to your Group.",
+                        url = f"https://telegram.me/{botInfo.username}?startgroup=true"
+                    )
                 ]
-            )
+            ]
         )
-    else:
-        await msg.reply_text(
-            "🚀Deploy your Own Bot.",
-            parse_mode = "html",
-            reply_markup = InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            "Click Here To Deploy🚀",
-                            url = "https://heroku.com/deploy?template=https://github.com/AJTimePyro/RequestTrackerBot"
-                        )
-                    ]
-                ]
-            )
-        )
+    )
     return
 
 @app.on_message(filters.new_chat_members)
 async def chatHandler(bot:Update, msg:Message):
-    if msg.from_user.id == Config.OWNER_ID:
-        if msg.new_chat_members[0].is_self:
-            if Config.GROUPID == str(msg.chat.id):
-                await msg.reply_text(
-                    "<b>Now make me admin💪.</b>",
-                    parse_mode = "html"
-                )
-            else:
-                await msg.reply_text(
-                    "<b>Currently I am not Supporting MultiGroups🥲</b>",
-                    parse_mode = "html"
-                )
-                
-    else:
+    if msg.new_chat_members[0].is_self:
         await msg.reply_text(
-            "🚀Deploy your Own Bot.",
-            parse_mode = "html",
-            reply_markup = InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            "Click Here To Deploy🚀",
-                            url = "https://heroku.com/deploy?template=https://github.com/AJTimePyro/RequestTrackerBot"
-                        )
-                    ]
-                ]
-            )
+            "<b>Your Group ID is <code>{msg.chat.id}</code>.</b>",
+            parse_mode = "html"
         )
     return
+
+@app.on_message(filters.forwarded & filters.private)
+async def forwardedHandler(bot:Update, msg:Message):
+    forwardInfo = msg.forward_from_chat
+    if forwardInfo.type == "channel":
+        await msg.reply_text(
+            f"<b>Your Channel ID is <code>{forwardInfo.id}</code></b>",
+            parse_mode = "hmtl"
+        )
+    return
+
+@app.on_message(filters.private & filters.command("add"))
+async def groupChannelIDHandler(bot:Update, msg:Message):
+    message = msg.text.split(" ")
+    if len(message) == 3:
+        _, groupID, channelID = message
+        try:
+            int(groupID)
+            int(channelID)
+        except ValueError:
+            await msg.reply_text(
+                "Group ID & Channel ID should be integer type.",
+                parse_mode = "html"
+            )
+        else:
+            document = collection_ID.find_one(query)
+            document[groupID] = [channelID, msg.chat.id]
+            collection_ID.update_one(
+                query,
+                {
+                    "$set" : document
+                }
+            )
+    else:
+        await msg.reply_text(
+            "Invalid Format\
+            \nSend Group ID & Channel ID in this format <code>/add GroupID ChannelID</code>.",
+            parse_mode = "html"
+        )
+
+@app.on_message(filters.private & filters.command("remove"))
+async def channelgroupRemover(bot:Update, msg:Message):
+    message = msg.text.split(" ")
+    if len(message) == 2:
+        _, groupID = message
+        document = collection_ID.find_one(query)
+        for key in document:
+            if key == groupID:
+                if document[key][1] == msg.chat.id:
+                    del document[key]
+                    collection_ID.update_one(
+                        query,
+                        {
+                            "$set" : document
+                            }
+                    )
+                    await msg.reply_text(
+                        "Your Channel ID & Group ID has now been Deleted from our Database.",
+                        parse_mode = "html"
+                    )
+                    break
+                else:
+                    await msg.reply_text(
+                        "You are not the who added this Channel ID & Group ID.",
+                        parse_mode = "html"
+                    )
+        else:
+            await msg.reply_text(
+                "Given Group ID is not found in our Database.",
+                parse_mode = "html"
+            )
+    else:
+        await msg.reply_text(
+            "Invalid Command",
+            parse_mode = "html"
+        )
+
 
 @app.on_message(filters.group & filters.regex("^#request (.*)"))
 async def requestHandler(bot:Update, msg:Message):
@@ -240,5 +290,7 @@ async def callBackButton(bot:Update, callback_query:CallbackQuery):
     return
 
 
+"""Bot is Started"""
+print("Bot has been Started!!!")
 app.run()
 
