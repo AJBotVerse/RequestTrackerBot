@@ -14,6 +14,7 @@ from pyrogram.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup
 )
+from pymongo import MongoClient
 
 # Importing Credentials & Required Data
 try:
@@ -28,6 +29,12 @@ app = Client(
     api_hash = Config.API_HASH,
     bot_token = Config.BOT_TOKEN
 )
+
+
+'''Connecting To Database'''
+mongo_client = MongoClient(Config.MONGO_STR)
+db_bot = mongo_client['RequestTrackerBot']
+collection_ID = db_bot['channelGroupID']
 
 
 """Handlers"""

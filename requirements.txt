@@ -1,5 +1,7 @@
 async-lru==1.0.2
+dnspython==2.1.0
 pyaes==1.6.1
+pymongo==3.12.1
 Pyrogram==1.2.9
 PySocks==1.7.1
 TgCrypto==1.2.2
