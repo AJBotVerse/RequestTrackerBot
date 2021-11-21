@@ -1,4 +1,5 @@
 
+
 # Virtual environment
 venv
 
@@ -7,4 +8,7 @@ testexp
 
 # Session File
 RequestTrackerBot.session
+
+# Cache File
+__pycache__
 

@@ -16,7 +16,10 @@ from pyrogram.types import (
 )
 
 # Importing Credentials & Required Data
-from config import *
+try:
+    from testexp.config import *
+except ModuleNotFoundError:
+    from config import *
 
 
 app = Client(
@@ -27,8 +30,12 @@ app = Client(
 )
 
 
+"""Handlers"""
+
+# Start & Help Handler
 @app.on_message(filters.private & filters.command(["start", "help"]))
 async def startHandler(bot:Update, msg:Message):
+    print(msg)
     if msg.from_user.id == Config.OWNER_ID:
         botInfo = await bot.get_me()
         await msg.reply_text(
