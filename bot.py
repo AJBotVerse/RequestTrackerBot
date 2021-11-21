@@ -116,6 +116,10 @@ async def groupChannelIDHandler(bot:Update, msg:Message):
                     "$set" : document
                 }
             )
+            await msg.reply_text(
+                "Your Group and Channel has now been added SuccessFully.",
+                parse_mode = "html"
+            )
     else:
         await msg.reply_text(
             "Invalid Format\
