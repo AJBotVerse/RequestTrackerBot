@@ -90,7 +90,7 @@ async def forwardedHandler(bot:Update, msg:Message):
     if forwardInfo.type == "channel":
         await msg.reply_text(
             f"<b>Your Channel ID is <code>{forwardInfo.id}</code></b>",
-            parse_mode = "hmtl"
+            parse_mode = "html"
         )
     return
 
