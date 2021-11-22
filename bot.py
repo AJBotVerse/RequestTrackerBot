@@ -22,6 +22,9 @@ try:
 except ModuleNotFoundError:
     from config import *
 
+# Importing built-in module
+from re import match
+
 # Importing Developer defined Module
 from plugin import *
 
@@ -48,6 +51,9 @@ if not collection_ID.find_one(query):
     collection_ID.insert_one(query)
 
 
+requestRegex = "#[rR][eE][qQ][uU][eE][sS][tT] "
+
+
 """Handlers"""
 
 # Start & Help Handler
@@ -62,7 +68,8 @@ async def startHandler(bot:Update, msg:Message):
         \n\t2. Make me admin in both Channel & Group.\
         \n\t3. Give permission to Post , Edit & Delete Messages.\
         \n\t4. Now send Group ID & Channel ID in this format <code>/add GroupID ChannelID</code>.\
-        \nNow Bot is ready to be used.",
+        \nNow Bot is ready to be used.\
+        \n\n<b>😊Join @AJPyroVerse & @AJPyroVerseGroup for getting more awesome 🤖bots like this.</b>",
         parse_mode = "html",
         reply_markup = InlineKeyboardMarkup(
             [
@@ -81,7 +88,7 @@ async def startHandler(bot:Update, msg:Message):
 async def chatHandler(bot:Update, msg:Message):
     if msg.new_chat_members[0].is_self:
         await msg.reply_text(
-            f"<b>Your Group ID is <code>{msg.chat.id}</code>.</b>",
+            f"<b>Your Group ID is <code>{msg.chat.id}</code></b>",
             parse_mode = "html"
         )
     return
@@ -106,7 +113,7 @@ async def groupChannelIDHandler(bot:Update, msg:Message):
             int(channelID)
         except ValueError:
             await msg.reply_text(
-                "Group ID & Channel ID should be integer type.",
+                "<b>Group ID & Channel ID should be integer type😒.</b>",
                 parse_mode = "html"
             )
         else:
@@ -123,24 +130,24 @@ async def groupChannelIDHandler(bot:Update, msg:Message):
                         }
                     )
                     await msg.reply_text(
-                        "Your Group and Channel has now been added SuccessFully.",
+                        "<b>Your Group and Channel has now been added SuccessFully🥳.</b>",
                         parse_mode = "html"
                     )
                 else:
                     await msg.reply_text(
-                        "Your Group ID already Added.",
+                        "<b>Your Channel ID already Added🤪.</b>",
                         parse_mode = "html"
                     )
             else:
                 await msg.reply_text(
-                    "Your Channel ID already Added.",
+                    "<b>Your Group ID already Added🤪.</b>",
                     parse_mode = "html"
                 )
 
     else:
         await msg.reply_text(
-            "Invalid Format\
-            \nSend Group ID & Channel ID in this format <code>/add GroupID ChannelID</code>.",
+            "<b>Invalid Format😒\
+            \nSend Group ID & Channel ID in this format <code>/add GroupID ChannelID</code>.</b>",
             parse_mode = "html"
         )
 
@@ -161,28 +168,30 @@ async def channelgroupRemover(bot:Update, msg:Message):
                             }
                     )
                     await msg.reply_text(
-                        "Your Channel ID & Group ID has now been Deleted from our Database.",
+                        "<b>Your Channel ID & Group ID has now been Deleted😢 from our Database.\
+                        \nYou can add them again by using <code>/add GroupID ChannelID</code>.</b>",
                         parse_mode = "html"
                     )
                     break
                 else:
                     await msg.reply_text(
-                        "You are not the who added this Channel ID & Group ID.",
+                        "<b>😒You are not the one who added this Channel ID & Group ID.</b>",
                         parse_mode = "html"
                     )
         else:
             await msg.reply_text(
-                "Given Group ID is not found in our Database.",
+                "<b>Given Group ID is not found in our Database🤔.</b>",
                 parse_mode = "html"
             )
     else:
         await msg.reply_text(
-            "Invalid Command",
+            "<b>Invalid Command😒\
+            Use <code>/remove GroupID</code></b>.",
             parse_mode = "html"
         )
 
 
-@app.on_message(filters.group & filters.regex("^#request (.*)"))
+@app.on_message(filters.group & filters.regex(requestRegex + "(.*)"))
 async def requestHandler(bot:Update, msg:Message):
     groupID = str(msg.chat.id)
 
@@ -197,7 +206,10 @@ async def requestHandler(bot:Update, msg:Message):
         fromUser = msg.from_user
         mentionUser = f"<a href='tg://user?id={fromUser.id}'>{fromUser.first_name}</a>"
         requestText = f"<b>Request by {mentionUser}\n\n{msg.text}</b>"
-        contentRequested = msg.text.split("#request ")[1]
+        originalMSG = msg.text
+        findRegexStr = match(requestRegex, originalMSG)
+        requestString = findRegexStr.group()
+        contentRequested = originalMSG.split(requestString)[1]
         
         groupIDPro = groupID.removeprefix(str(-100))
         channelIDPro = channelID.removeprefix(str(-100))
@@ -290,7 +302,9 @@ async def callBackButton(bot:Update, callback_query:CallbackQuery):
 
             msg = callback_query.message
             originalMsg = msg.text
-            contentRequested = originalMsg.split('#request ')[1]
+            findRegexStr = match(requestRegex, originalMsg)
+            requestString = findRegexStr.group()
+            contentRequested = originalMsg.split(requestString)[1]
             requestedBy = originalMsg.removeprefix("Request by ").split('\n\n')[0]
             userid = msg.entities[1].user.id
             mentionUser = f"<a href='tg://user?id={userid}'>{requestedBy}</a>"
