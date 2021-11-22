@@ -111,17 +111,32 @@ async def groupChannelIDHandler(bot:Update, msg:Message):
             )
         else:
             document = collection_ID.find_one(query)
-            document[groupID] = [channelID, msg.chat.id]
-            collection_ID.update_one(
-                query,
-                {
-                    "$set" : document
-                }
-            )
-            await msg.reply_text(
-                "Your Group and Channel has now been added SuccessFully.",
-                parse_mode = "html"
-            )
+            try:
+                document[groupID]
+            except KeyError:
+                if idExtractor(channelID, document):
+                    document[groupID] = [channelID, msg.chat.id]
+                    collection_ID.update_one(
+                        query,
+                        {
+                            "$set" : document
+                        }
+                    )
+                    await msg.reply_text(
+                        "Your Group and Channel has now been added SuccessFully.",
+                        parse_mode = "html"
+                    )
+                else:
+                    await msg.reply_text(
+                        "Your Group ID already Added.",
+                        parse_mode = "html"
+                    )
+            else:
+                await msg.reply_text(
+                    "Your Channel ID already Added.",
+                    parse_mode = "html"
+                )
+
     else:
         await msg.reply_text(
             "Invalid Format\
