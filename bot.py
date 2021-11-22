@@ -23,7 +23,7 @@ except ModuleNotFoundError:
     from config import *
 
 # Importing built-in module
-from re import match
+from re import match, search
 
 # Importing Developer defined Module
 from plugin import *
@@ -121,7 +121,7 @@ async def groupChannelIDHandler(bot:Update, msg:Message):
             try:
                 document[groupID]
             except KeyError:
-                if idExtractor(channelID, document):
+                if not idExtractor(channelID, document):
                     document[groupID] = [channelID, msg.chat.id]
                     collection_ID.update_one(
                         query,
@@ -186,7 +186,7 @@ async def channelgroupRemover(bot:Update, msg:Message):
     else:
         await msg.reply_text(
             "<b>Invalid Command😒\
-            Use <code>/remove GroupID</code></b>.",
+            \nUse <code>/remove GroupID</code></b>.",
             parse_mode = "html"
         )
 
@@ -302,7 +302,7 @@ async def callBackButton(bot:Update, callback_query:CallbackQuery):
 
             msg = callback_query.message
             originalMsg = msg.text
-            findRegexStr = match(requestRegex, originalMsg)
+            findRegexStr = search(requestRegex, originalMsg)
             requestString = findRegexStr.group()
             contentRequested = originalMsg.split(requestString)[1]
             requestedBy = originalMsg.removeprefix("Request by ").split('\n\n')[0]
