@@ -44,6 +44,8 @@ query = {
         "userID"
     ]
 }
+if not collection_ID.find_one(query):
+    collection_ID.insert_one(query)
 
 
 """Handlers"""
