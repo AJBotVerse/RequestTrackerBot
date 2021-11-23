@@ -14,6 +14,13 @@ from pyrogram.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup
 )
+from pyrogram.errors.exceptions.bad_request_400 import (
+    PeerIdInvalid,
+    UserNotParticipant,
+    ChannelPrivate,
+    ChatIdInvalid,
+    ChannelInvalid
+)
 from pymongo import MongoClient
 
 # Importing Credentials & Required Data
@@ -117,39 +124,83 @@ async def groupChannelIDHandler(bot:Update, msg:Message):
                 parse_mode = "html"
             )
         else:
-            document = collection_ID.find_one(query)
-            try:
-                document[groupID]
-            except KeyError:
-                if not idExtractor(channelID, document):
-                    document[groupID] = [channelID, msg.chat.id]
-                    collection_ID.update_one(
-                        query,
-                        {
-                            "$set" : document
-                        }
-                    )
+            documents = collection_ID.find()
+            for document in documents:
+                try:
+                    document[groupID]
+                except KeyError:
+                    pass
+                else:
                     await msg.reply_text(
-                        "<b>Your Group and Channel has now been added SuccessFully🥳.</b>",
+                    "<b>Your Group ID already Added🤪.</b>",
+                    parse_mode = "html"
+                    )
+                    break
+                for record in document:
+                    if record == "_id":
+                        continue
+                    else:
+                        if document[record][0] == channelID:
+                            await msg.reply_text(
+                                "<b>Your Channel ID already Added🤪.</b>",
+                                parse_mode = "html"
+                            )
+                            break
+            else:   # If group id & channel not found in db
+                try:
+                    botSelfGroup = await bot.get_chat_member(int(groupID), 'me')
+                except PeerIdInvalid:
+                    await msg.reply_text(
+                        "<b>Group ID is wrong.</b>",
+                        parse_mode = "html"
+                    )
+                except UserNotParticipant:
+                    await msg.reply_text(
+                        "<b>Add me in group and make me admin, then use /add.</b>",
                         parse_mode = "html"
                     )
                 else:
-                    await msg.reply_text(
-                        "<b>Your Channel ID already Added🤪.</b>",
-                        parse_mode = "html"
-                    )
-            else:
-                await msg.reply_text(
-                    "<b>Your Group ID already Added🤪.</b>",
-                    parse_mode = "html"
-                )
-
+                    if botSelfGroup.status != "administrator":
+                        await msg.reply_text(
+                            "<b>Make me admin in Group, Then add use /add.</b>",
+                            parse_mode = "html"
+                        )
+                    else:
+                        try:
+                            botSelfChannel = await bot.get_chat_member(int(channelID), 'me')
+                        except (UserNotParticipant, ChannelPrivate):
+                            await msg.reply_text(
+                                "<b>Add me in Channel and make me admin, then use /add.</b>",
+                                parse_mode = "html"
+                            )
+                        except (ChatIdInvalid, ChannelInvalid):
+                            await msg.reply_text(
+                                "<b>Channel ID is wrong.</b>",
+                                parse_mode = "html"
+                            )
+                        else:
+                            if not (botSelfChannel.can_post_messages and botSelfChannel.can_edit_messages and botSelfChannel.can_delete_messages):
+                                await msg.reply_text(
+                                    "<b>Make sure to give Permissions like Post Messages, Edit Messages & Delete Messages.</b>",
+                                    parse_mode = "html"
+                                )
+                            else:
+                                collection_ID.insert_one(
+                                    {
+                                        groupID : [channelID, msg.chat.id]
+                                    }
+                                )
+                                await msg.reply_text(
+                                    "<b>Your Group and Channel has now been added SuccessFully🥳.</b>",
+                                    parse_mode = "html"
+                                )
     else:
         await msg.reply_text(
             "<b>Invalid Format😒\
             \nSend Group ID & Channel ID in this format <code>/add GroupID ChannelID</code>.</b>",
             parse_mode = "html"
         )
+    return
 
 @app.on_message(filters.private & filters.command("remove"))
 async def channelgroupRemover(bot:Update, msg:Message):
@@ -161,6 +212,7 @@ async def channelgroupRemover(bot:Update, msg:Message):
             if key == groupID:
                 if document[key][1] == msg.chat.id:
                     del document[key]
+                    print(document)
                     collection_ID.update_one(
                         query,
                         {
@@ -178,6 +230,7 @@ async def channelgroupRemover(bot:Update, msg:Message):
                         "<b>😒You are not the one who added this Channel ID & Group ID.</b>",
                         parse_mode = "html"
                     )
+                    break
         else:
             await msg.reply_text(
                 "<b>Given Group ID is not found in our Database🤔.</b>",
