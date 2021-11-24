@@ -207,41 +207,47 @@ async def channelgroupRemover(bot:Update, msg:Message):
     message = msg.text.split(" ")
     if len(message) == 2:
         _, groupID = message
-        document = collection_ID.find_one(query)
-        for key in document:
-            if key == groupID:
-                if document[key][1] == msg.chat.id:
-                    del document[key]
-                    print(document)
-                    collection_ID.update_one(
-                        query,
-                        {
-                            "$set" : document
-                            }
-                    )
-                    await msg.reply_text(
-                        "<b>Your Channel ID & Group ID has now been Deleted😢 from our Database.\
-                        \nYou can add them again by using <code>/add GroupID ChannelID</code>.</b>",
-                        parse_mode = "html"
-                    )
-                    break
+        try:
+            int(groupID)
+        except ValueError:
+            await msg.reply_text(
+                "<b>Group ID & Channel ID should be integer type😒.</b>",
+                parse_mode = "html"
+            )
+        else:
+            documents = collection_ID.find()
+            for document in documents:
+                print(document)
+                try:
+                    document[groupID]
+                except KeyError:
+                    continue
                 else:
-                    await msg.reply_text(
+                    if document[groupID][1] == msg.chat.id:
+                        collection_ID.delete_one(document)
+                        await msg.reply_text(
+                            "<b>Your Channel ID & Group ID has now been Deleted😢 from our Database.\
+                            \nYou can add them again by using <code>/add GroupID ChannelID</code>.</b>",
+                            parse_mode = "html"
+                        )
+                    else:
+                        await msg.reply_text(
                         "<b>😒You are not the one who added this Channel ID & Group ID.</b>",
                         parse_mode = "html"
                     )
                     break
-        else:
-            await msg.reply_text(
-                "<b>Given Group ID is not found in our Database🤔.</b>",
-                parse_mode = "html"
-            )
+            else:
+                await msg.reply_text(
+                    "<b>Given Group ID is not found in our Database🤔.</b>",
+                    parse_mode = "html"
+                )
     else:
         await msg.reply_text(
             "<b>Invalid Command😒\
             \nUse <code>/remove GroupID</code></b>.",
             parse_mode = "html"
         )
+    return
 
 
 @app.on_message(filters.group & filters.regex(requestRegex + "(.*)"))
