@@ -217,7 +217,6 @@ async def channelgroupRemover(bot:Update, msg:Message):
         else:
             documents = collection_ID.find()
             for document in documents:
-                print(document)
                 try:
                     document[groupID]
                 except KeyError:
@@ -254,75 +253,75 @@ async def channelgroupRemover(bot:Update, msg:Message):
 async def requestHandler(bot:Update, msg:Message):
     groupID = str(msg.chat.id)
 
-    document = collection_ID.find_one(query)
-    try:
-        channelIDL = document[groupID]
-    except KeyError:
-        pass
-    else:
-        channelID = channelIDL[0]
+    documents = collection_ID.find()
+    for document in documents:
+        try:
+            document[groupID]
+        except KeyError:
+            pass
+        else:
+            channelID = document[groupID][0]
+            fromUser = msg.from_user
+            mentionUser = f"<a href='tg://user?id={fromUser.id}'>{fromUser.first_name}</a>"
+            requestText = f"<b>Request by {mentionUser}\n\n{msg.text}</b>"
+            originalMSG = msg.text
+            findRegexStr = match(requestRegex, originalMSG)
+            requestString = findRegexStr.group()
+            contentRequested = originalMSG.split(requestString)[1]
+            
+            groupIDPro = groupID.removeprefix(str(-100))
+            channelIDPro = channelID.removeprefix(str(-100))
 
-        fromUser = msg.from_user
-        mentionUser = f"<a href='tg://user?id={fromUser.id}'>{fromUser.first_name}</a>"
-        requestText = f"<b>Request by {mentionUser}\n\n{msg.text}</b>"
-        originalMSG = msg.text
-        findRegexStr = match(requestRegex, originalMSG)
-        requestString = findRegexStr.group()
-        contentRequested = originalMSG.split(requestString)[1]
-        
-        groupIDPro = groupID.removeprefix(str(-100))
-        channelIDPro = channelID.removeprefix(str(-100))
-
-        requestMSG = await bot.send_message(
-            int(channelID),
-            requestText,
-            reply_markup = InlineKeyboardMarkup(
-                [
+            requestMSG = await bot.send_message(
+                int(channelID),
+                requestText,
+                reply_markup = InlineKeyboardMarkup(
                     [
-                        InlineKeyboardButton(
-                            "Requested Message",
-                            url = f"https://t.me/c/{groupIDPro}/{msg.message_id}"
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            "🚫Reject",
-                            "reject"
-                        ),
-                        InlineKeyboardButton(
-                            "Done✅",
-                            "done"
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            "⚠️Unavailable⚠️",
-                            "unavailable"
-                        )
+                        [
+                            InlineKeyboardButton(
+                                "Requested Message",
+                                url = f"https://t.me/c/{groupIDPro}/{msg.message_id}"
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                "🚫Reject",
+                                "reject"
+                            ),
+                            InlineKeyboardButton(
+                                "Done✅",
+                                "done"
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                "⚠️Unavailable⚠️",
+                                "unavailable"
+                            )
+                        ]
                     ]
-                ]
+                )
             )
-        )
 
-        replyText = f"<b>👋 Hello {mentionUser} !!\n\n📍 Your Request for {contentRequested} has been submitted to the admins.\n\n🚀 Your Request Will Be Uploaded In 48hours or less.\n📌 Please Note that Admins might be busy. So, this may take more time.\n\n👇 See Your Request Status Here 👇</b>"
+            replyText = f"<b>👋 Hello {mentionUser} !!\n\n📍 Your Request for {contentRequested} has been submitted to the admins.\n\n🚀 Your Request Will Be Uploaded In 48hours or less.\n📌 Please Note that Admins might be busy. So, this may take more time.\n\n👇 See Your Request Status Here 👇</b>"
 
-        await msg.reply_text(
-            replyText,
-            parse_mode = "html",
-            reply_to_message_id = msg.message_id,
-            reply_markup = InlineKeyboardMarkup(
-                [
+            await msg.reply_text(
+                replyText,
+                parse_mode = "html",
+                reply_to_message_id = msg.message_id,
+                reply_markup = InlineKeyboardMarkup(
                     [
-                        InlineKeyboardButton(
-                            "⏳Request Status⏳",
-                            url = f"https://t.me/c/{channelIDPro}/{requestMSG.message_id}"
-                        )
+                        [
+                            InlineKeyboardButton(
+                                "⏳Request Status⏳",
+                                url = f"https://t.me/c/{channelIDPro}/{requestMSG.message_id}"
+                            )
+                        ]
                     ]
-                ]
+                )
             )
-        )
-    finally:
-        return
+        finally:
+            return
 
 @app.on_callback_query()
 async def callBackButton(bot:Update, callback_query:CallbackQuery):
