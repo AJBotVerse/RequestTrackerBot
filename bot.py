@@ -253,8 +253,12 @@ async def requestHandler(bot:Update, msg:Message):
             requestString = findRegexStr.group()
             contentRequested = originalMSG.split(requestString)[1]
             
-            groupIDPro = groupID.removeprefix(str(-100))
-            channelIDPro = channelID.removeprefix(str(-100))
+            try:
+                groupIDPro = groupID.removeprefix(str(-100))
+                channelIDPro = channelID.removeprefix(str(-100))
+            except AttributeError:
+                groupIDPro = groupID[4:]
+                channelIDPro = channelID[4:]
 
             # Sending request in channel
             requestMSG = await bot.send_message(
