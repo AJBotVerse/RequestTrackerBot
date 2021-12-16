@@ -135,7 +135,7 @@ async def groupChannelIDHandler(bot:Update, msg:Message):
             else:   # If group id & channel not found in db
                 try:
                     botSelfGroup = await bot.get_chat_member(int(groupID), 'me')
-                except PeerIdInvalid:   # If given group id is invalid
+                except (PeerIdInvalid, ValueError):   # If given group id is invalid
                     await msg.reply_text(
                         "<b>😒Group ID is wrong.\n\n😊Join @AJPyroVerse & @AJPyroVerseGroup for getting more awesome 🤖bots like this.</b>",
                         parse_mode = "html"
@@ -216,9 +216,9 @@ async def channelgroupRemover(bot:Update, msg:Message):
                         )
                     else:   # If group id, channel id is not removing by one who added
                         await msg.reply_text(
-                        "<b>😒You are not the one who added this Channel ID & Group ID.</b>",
-                        parse_mode = "html"
-                    )
+                            "<b>😒You are not the one who added this Channel ID & Group ID.</b>",
+                            parse_mode = "html"
+                        )
                     break
             else:   # If group id not found in database
                 await msg.reply_text(
