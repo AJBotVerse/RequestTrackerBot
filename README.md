@@ -33,6 +33,8 @@ Click Below Button to Deploy your Bot.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/AJTimePyro/RequestBot)
 
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https%3A%2F%2Fgithub.com%2FAJTimePyro%2FRequestTrackerBot&envs=API_ID%2CAPI_HASH%2CBOT_TOKEN%2CMONGO_STR&API_IDDesc=+Get+both+from+https%3A%2F%2Fmy.telegram.org&API_HASHDesc=+Get+both+from+https%3A%2F%2Fmy.telegram.org&BOT_TOKENDesc=Get+easily+from+https%3A%2F%2Ft.me%2FBotFather&MONGO_STRDesc=Get+From+MongoDB+Atlas)
+
 ## How to use?
 1. Deploy your Bot on Heroku
 2. Add Bot to your group & make it admin.
