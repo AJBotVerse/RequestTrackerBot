@@ -118,7 +118,7 @@ async def groupChannelIDHandler(bot:Update, msg:Message):
                     pass
                 else:   # If group id found in database
                     await msg.reply_text(
-                    "<b>Your Group ID already Added🤪.</b>",
+                    "<b>Your Group ID already Added.</b>",
                     parse_mode = "html"
                     )
                     break
@@ -128,7 +128,7 @@ async def groupChannelIDHandler(bot:Update, msg:Message):
                     else:
                         if document[record][0] == channelID:    #If channel id found in database
                             await msg.reply_text(
-                                "<b>Your Channel ID already Added🤪.</b>",
+                                "<b>Your Channel ID already Added.</b>",
                                 parse_mode = "html"
                             )
                             break
@@ -361,12 +361,15 @@ async def callBackButton(bot:Update, callback_query:CallbackQuery):
                             button = InlineKeyboardButton("Request Rejected🚫", "rejected")
 
                         msg = callback_query.message
+                        userid = 12345678
+                        for m in msg.entities:
+                            if m.type == "text_mention":
+                                userid = m.user.id
                         originalMsg = msg.text
                         findRegexStr = search(requestRegex, originalMsg)
                         requestString = findRegexStr.group()
                         contentRequested = originalMsg.split(requestString)[1]
                         requestedBy = originalMsg.removeprefix("Request by ").split('\n\n')[0]
-                        userid = msg.entities[1].user.id
                         mentionUser = f"<a href='tg://user?id={userid}'>{requestedBy}</a>"
                         originalMsgMod = originalMsg.replace(requestedBy, mentionUser)
                         originalMsgMod = f"<s>{originalMsgMod}</s>"
