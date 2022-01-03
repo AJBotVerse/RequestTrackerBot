@@ -292,7 +292,8 @@ async def requestHandler(bot:Update, msg:Message):
                 )
             )
 
-            replyText = f"<b>👋 Hello {mentionUser} !!\n\n📍 Your Request for {contentRequested} has been submitted to the admins.\n\n🚀 Your Request Will Be Uploaded soon.\n📌 Please Note that Admins might be busy. So, this may take more time.\n\n👇 See Your Request Status Here 👇</b>"
+            replyText = f"<b>👋 Hello {mentionUser} \n\n📍 Your Request for {contentRequested} has been submitted to the admins.\n\n📍 Your Request Will Be Uploaded soon.\n\n📍 Please Note that Admins might be busy. So, this may take more time.\n\n📍 Request will be closed from friday to sunday.\n\n👇 See Your Request Status Here 👇</b>"
+
 
             # Sending message for user in group
             await msg.reply_text(
@@ -304,7 +305,7 @@ async def requestHandler(bot:Update, msg:Message):
                         [
                             InlineKeyboardButton(
                                 "⏳Request Status⏳",
-                                url = f"https://t.me/c/{channelIDPro}/{requestMSG.message_id}"
+                                url = f"https://t.me/+wrvPBm19GpVjMDc1"
                             )
                         ]
                     ]
@@ -349,16 +350,17 @@ async def callBackButton(bot:Update, callback_query:CallbackQuery):
                     else:   # If accepting, rejecting request tried to be done by either admin or owner
                         if data == "reject":
                             result = "REJECTED"
-                            groupResult = "has been Rejected💔."
+                            groupResult = "Already on the channel check before requesting💔."
                             button = InlineKeyboardButton("Request Rejected🚫", "rejected")
                         elif data == "done":
                             result = "COMPLETED"
-                            groupResult = "is Completed🥳."
+                            groupResult = "is Completed please visit the channel🥳."
                             button = InlineKeyboardButton("Request Completed✅", "completed")
                         elif data == "unavailable":
                             result = "UNAVAILABLE"
-                            groupResult = "has been rejected💔 due to Unavailablity🥲."
+                            groupResult = "has been rejected. Due to Unavailablity🥲."
                             button = InlineKeyboardButton("Request Rejected🚫", "rejected")
+
 
                         msg = callback_query.message
                         userid = 12345678
